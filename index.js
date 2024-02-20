@@ -55,10 +55,26 @@ app.post('/api/persons', (request, response) => {
         return Math.floor(Math.random() * (max - min) + min)
     }
 
+    const nameExists = (name) => {
+        return persons.find(person => person.name === name)
+    }
+
+    const body = request.body
+    if (!body.name || !body.number) {
+        return response.status(400).json({
+            error: 'name or number cannot be empty'
+        })
+    }
+    if (nameExists(body.name)) {
+        return response.status(400).json({
+            error: 'a person with this name already exists'
+        })
+    }
+
     const newPerson = {
         id: generateRandomId(1, 10e9),
-        name: request.body.name,
-        number: request.body.number
+        name: body.name,
+        number: body.number
     }
 
     console.log(`Adding new person: ${newPerson.name}..`)

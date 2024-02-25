@@ -18,25 +18,22 @@ app.get('/api/persons', (request, response, next) => {
         .catch(error => next(error))
 })
 
-// fix this in Ex 3.18 with proper error handling
-/*app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
+app.get('/api/persons/:id', (request, response, next) => {
+    Person.findById(request.params.id)
+        .then(person => { response.json(person) })
+        .catch(error => next(error))
+})
 
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
-})*/
-
-app.get('/info', (request, response) => {
-    const date = new Date().toString()
-    peopleCount = 1 // fix this in Ex 3.18
-    response.send(`
-        <p>Phonebook has info for ${peopleCount} people</p>
-        <p>${date}</p>
-        `)
+app.get('/info', (request, response, next) => {
+    Person.countDocuments({})
+        .then(peopleCount => {
+            const date = new Date().toString()
+            response.send(`
+                <p>Phonebook has info for ${peopleCount} people</p>
+                <p>${date}</p>
+            `)
+        })
+        .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {

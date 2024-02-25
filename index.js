@@ -60,14 +60,9 @@ app.get('/info', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-
-    const generateRandomId = (min, max) => {
-        return Math.floor(Math.random() * (max - min) + min)
-    }
-
-    const nameExists = (name) => {
+    /*const nameExists = (name) => {
         return persons.find(person => person.name === name)
-    }
+    }*/
 
     const body = request.body
     if (!body.name || !body.number) {
@@ -75,24 +70,22 @@ app.post('/api/persons', (request, response) => {
             error: 'name or number cannot be empty'
         })
     }
-    if (nameExists(body.name)) {
+    /*if (nameExists(body.name)) {
         return response.status(400).json({
             error: 'a person with this name already exists'
         })
-    }
+    }*/
 
-    const newPerson = {
-        id: generateRandomId(1, 10e9),
+    const newPerson = new Person({
         name: body.name,
         number: body.number
-    }
+    })
 
     console.log(`Adding new person: ${newPerson.name}..`)
-    persons = persons.concat(newPerson)
-    console.log(`..${newPerson.name} added!`)
-
-    response.json(newPerson)
-
+    newPerson.save().then(savedPerson => {
+        console.log(`..${savedPerson.name} added!`)
+        response.json(savedPerson)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {

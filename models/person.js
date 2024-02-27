@@ -18,7 +18,15 @@ const peopleSchema = new mongoose.Schema({
         type: String,
         minlength: 3,
     },
-    number: String,
+    number: {
+        type: String,
+        validate: {
+            validator: number => {
+                return /\d{2,3}-\d{5,}/.test(number) && number.length >= 8
+            },
+            message: number => `${number.value} is not valid. The number must contain 2 or 3 digits followed by a hyphen, followed by at least 5 more digits. The number must be at least 8 characters long, including the hyphen.`
+        }
+    }
 })
 
 peopleSchema.set('toJSON', {
